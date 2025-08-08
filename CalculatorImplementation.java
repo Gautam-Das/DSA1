@@ -87,7 +87,10 @@ public class CalculatorImplementation implements Calculator {
 
     @Override
     public int delayPop(int millis) throws InterruptedException {
-        wait(millis);
+        synchronized (this) {
+            wait(millis);
+        }
         return pop();
+
     }
 }
