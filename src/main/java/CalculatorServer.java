@@ -4,7 +4,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 
 public class CalculatorServer {
-    static String ServerName = "Calculator Service";
+    static String ServerName = "main.java.Calculator Service";
 
     public static void main(String[] args){
         try {

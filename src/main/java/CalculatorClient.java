@@ -1,4 +1,3 @@
-import javax.sound.midi.SysexMessage;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -10,7 +9,7 @@ public class CalculatorClient {
             Registry registry = LocateRegistry.getRegistry();
             Calculator server = (Calculator) registry.lookup(ServerName);
 
-            // empty stack
+            // empty    stack
             System.out.println(server.isEmpty()); // should be true
 
             // add 1,2,3

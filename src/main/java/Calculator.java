@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 public interface Calculator extends Remote {
 
-    ArrayList<Integer> stack = new ArrayList<Integer>();
-    HashMap<String, Runnable> pushOperations = new HashMap<String, Runnable>();
+    ArrayList<Integer> stack = new ArrayList<>();
+    HashMap<String, Runnable> pushOperations = new HashMap<>();
 
     void pushValue(int val) throws RemoteException;
     void pushOperation(String operation) throws RemoteException;
