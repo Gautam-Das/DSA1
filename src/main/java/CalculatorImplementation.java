@@ -1,17 +1,22 @@
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class CalculatorImplementation implements Calculator {
-    private void stackMin() {
-        int minimum = Collections.min(stack);
-        stack.clear();
-        stack.add(minimum);
+    private void stackMin(UUID user) {
+        ArrayList<Integer> userStack = clientStackMap.get(user);
+        int minimum = Collections.min(userStack);
+        userStack.clear();
+        userStack.add(minimum);
     }
 
-    private void stackMax() {
-        int maximum = Collections.max(stack);
-        stack.clear();
-        stack.add(maximum);
+    private void stackMax(UUID user) {
+        ArrayList<Integer> userStack = clientStackMap.get(user);
+
+        int maximum = Collections.max(userStack);
+        userStack.clear();
+        userStack.add(maximum);
     }
 
     private int gcd(int a, int b){
@@ -30,32 +35,36 @@ public class CalculatorImplementation implements Calculator {
         return Math.abs(a * b) / gcd(a, b);
     }
 
-    private void stackLCM() {
+    private void stackLCM(UUID user) {
+        ArrayList<Integer> userStack = clientStackMap.get(user);
+
         // iteratively find LCM
-        int result = stack.get(0);
-        for (int i = 1; i < stack.size(); i++){
-            result = lcm(result, stack.get(i));
+        int result = userStack.get(0);
+        for (int i = 1; i < userStack.size(); i++){
+            result = lcm(result, userStack.get(i));
         }
 
         // empty the list
-        stack.clear();
+        userStack.clear();
 
         // add lcm
-        stack.add(result);
+        userStack.add(result);
     }
 
-    private void stackGCD() {
+    private void stackGCD(UUID user) {
+        ArrayList<Integer> userStack = clientStackMap.get(user);
+
         // iteratively find GCD
-        int result = stack.get(0);
-        for (int i = 1; i < stack.size(); i++){
-            result = gcd(result, stack.get(i));
+        int result = userStack.get(0);
+        for (int i = 1; i < userStack.size(); i++){
+            result = gcd(result, userStack.get(i));
         }
 
         // empty the list
-        stack.clear();
+        userStack.clear();
 
         // add gcd
-        stack.add(result);
+        userStack.add(result);
     }
 
     public CalculatorImplementation() throws RemoteException {
@@ -66,31 +75,36 @@ public class CalculatorImplementation implements Calculator {
     }
 
     @Override
-    public void pushValue(int val) {
-        stack.add(val);
+    public UUID register(){
+        return UUID.randomUUID();
     }
 
     @Override
-    public void pushOperation(String operation) {
-        pushOperations.get(operation).run();
+    public void pushValue(UUID user, int val) {
+        clientStackMap.get(user).add(val);
     }
 
     @Override
-    public int pop() {
-        return stack.remove(stack.size() - 1);
+    public void pushOperation(UUID user, String operation) {
+        pushOperations.get(operation).accept(user);
     }
 
     @Override
-    public boolean isEmpty() {
-        return stack.isEmpty();
+    public int pop(UUID user) {
+        return clientStackMap.get(user).remove(clientStackMap.get(user).size() - 1);
     }
 
     @Override
-    public int delayPop(int millis) throws InterruptedException {
+    public boolean isEmpty(UUID user) {
+        return clientStackMap.get(user).isEmpty();
+    }
+
+    @Override
+    public int delayPop(UUID user, int millis) throws InterruptedException {
         synchronized (this) {
             wait(millis);
         }
-        return pop();
+        return pop(user);
 
     }
 }
