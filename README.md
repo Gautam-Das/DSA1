@@ -24,7 +24,7 @@ To compile the Java files there are two options:
     Windows: `javac -d out -cp "out;src/main/java" src/main/java/*.java`
 
     Linux: `javac -d out -cp "out:src/main/java" src/main/java/*.java`
-2. `mvn`
+2. Using maven
 
     `mvn test-compile`
 
