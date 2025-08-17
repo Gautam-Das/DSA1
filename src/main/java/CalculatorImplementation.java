@@ -4,6 +4,15 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class CalculatorImplementation implements Calculator {
+    // verify that the UUID is valid
+    private void validateUser(UUID user) throws InvalidClientException {
+        if (!clientStackMap.containsKey(user)) {
+            throw new InvalidClientException(user);
+        }
+    }
+    // ---------- Helper Methods for Stack Operations ----------
+
+    // Replace the user's stack with the minimum of all current values
     private void stackMin(UUID user) {
         ArrayList<Integer> userStack = clientStackMap.get(user);
         int minimum = Collections.min(userStack);
@@ -11,6 +20,7 @@ public class CalculatorImplementation implements Calculator {
         userStack.add(minimum);
     }
 
+    // Replace the user's stack with the maximum of all current values
     private void stackMax(UUID user) {
         ArrayList<Integer> userStack = clientStackMap.get(user);
 
@@ -19,22 +29,29 @@ public class CalculatorImplementation implements Calculator {
         userStack.add(maximum);
     }
 
+    // Compute the greatest common divisor using Euclidean algorithm
+    // return positive mod by convention
     private int gcd(int a, int b){
         while (b != 0) {
             int temp = b;
             b = a % b;
             a = temp;
         }
-        return a;
+        return Math.abs(a);
     }
 
+    // Compute the least common multiple
     private int lcm(int a, int b){
         if (a == 0 || b == 0) {
             return 0; // LCM involving zero is typically defined as zero
         }
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(gcd(a,b));
         return Math.abs(a * b) / gcd(a, b);
     }
 
+    // Replace the user's stack with the LCM of all current values
     private void stackLCM(UUID user) {
         ArrayList<Integer> userStack = clientStackMap.get(user);
 
@@ -51,6 +68,7 @@ public class CalculatorImplementation implements Calculator {
         userStack.add(result);
     }
 
+    // Replace the user's stack with the GCD of all current values
     private void stackGCD(UUID user) {
         ArrayList<Integer> userStack = clientStackMap.get(user);
 
@@ -67,6 +85,7 @@ public class CalculatorImplementation implements Calculator {
         userStack.add(result);
     }
 
+    // ---------- Constructor ----------
     public CalculatorImplementation() throws RemoteException {
         pushOperations.put("min", this::stackMin);
         pushOperations.put("max", this::stackMax);
@@ -74,37 +93,45 @@ public class CalculatorImplementation implements Calculator {
         pushOperations.put("gcd", this::stackGCD);
     }
 
+    // ---------- Public Methods -------
     @Override
     public UUID register(){
-        return UUID.randomUUID();
+        // Generate a unique client ID and create a new stack for this client
+        UUID id = UUID.randomUUID();
+        clientStackMap.put(id, new ArrayList<>());
+        return id;
     }
 
     @Override
-    public void pushValue(UUID user, int val) {
+    public void pushValue(UUID user, int val) throws InvalidClientException {
+        validateUser(user);
         clientStackMap.get(user).add(val);
     }
 
     @Override
-    public void pushOperation(UUID user, String operation) {
+    public void pushOperation(UUID user, String operation) throws InvalidClientException {
+        validateUser(user);
         pushOperations.get(operation).accept(user);
     }
 
     @Override
-    public int pop(UUID user) {
+    public int pop(UUID user) throws InvalidClientException {
+        validateUser(user);
         return clientStackMap.get(user).remove(clientStackMap.get(user).size() - 1);
     }
 
     @Override
-    public boolean isEmpty(UUID user) {
+    public boolean isEmpty(UUID user) throws InvalidClientException {
+        validateUser(user);
         return clientStackMap.get(user).isEmpty();
     }
 
     @Override
-    public int delayPop(UUID user, int millis) throws InterruptedException {
-        synchronized (this) {
-            wait(millis);
-        }
+    public int delayPop(UUID user, int millis) throws InvalidClientException, InterruptedException {
+        validateUser(user);
+        // using thread.sleep to wait the required time
+        // not using Synchronized, so that other operations can still be carried out
+        Thread.sleep(millis);
         return pop(user);
-
     }
 }

@@ -61,7 +61,7 @@ public class CalculatorClient {
             // delay pop
             server.pushValue(id, 0);
             System.out.println(server.isEmpty(id)); // should be false
-            System.out.println(server.delayPop(id,2000));
+            System.out.println(server.delayPop(id,2000)); // should be 0
             System.out.println(server.isEmpty(id)); // should be true
 
         } catch (Exception e) {
