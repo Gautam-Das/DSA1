@@ -1,6 +1,7 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -21,9 +22,9 @@ public interface Calculator extends Remote {
      */
     UUID register() throws RemoteException;
 
-    // using concurrent hashmap to better support concurrency compared to hasmap
+    // using concurrent hashmap to better support concurrency compared to hashmap
     // stores a mapping between each client UUID and its stack of integers
-    ConcurrentHashMap<UUID, ArrayList<Integer>> clientStackMap = new ConcurrentHashMap<>();
+    ConcurrentHashMap<UUID, List<Integer>> clientStackMap = new ConcurrentHashMap<>();
     // maps operation names ("min", "max", "lcm", "gcd") to their handlers
     ConcurrentHashMap<String, Consumer<UUID>> pushOperations = new ConcurrentHashMap<>();
 

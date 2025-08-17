@@ -1,6 +1,7 @@
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CalculatorImplementation implements Calculator {
@@ -14,7 +15,7 @@ public class CalculatorImplementation implements Calculator {
 
     // Replace the user's stack with the minimum of all current values
     private void stackMin(UUID user) {
-        ArrayList<Integer> userStack = clientStackMap.get(user);
+        List<Integer> userStack = clientStackMap.get(user);
         int minimum = Collections.min(userStack);
         userStack.clear();
         userStack.add(minimum);
@@ -22,7 +23,7 @@ public class CalculatorImplementation implements Calculator {
 
     // Replace the user's stack with the maximum of all current values
     private void stackMax(UUID user) {
-        ArrayList<Integer> userStack = clientStackMap.get(user);
+        List<Integer> userStack = clientStackMap.get(user);
 
         int maximum = Collections.max(userStack);
         userStack.clear();
@@ -50,7 +51,7 @@ public class CalculatorImplementation implements Calculator {
 
     // Replace the user's stack with the LCM of all current values
     private void stackLCM(UUID user) {
-        ArrayList<Integer> userStack = clientStackMap.get(user);
+        List<Integer> userStack = clientStackMap.get(user);
 
         // iteratively find LCM
         int result = userStack.get(0);
@@ -67,7 +68,7 @@ public class CalculatorImplementation implements Calculator {
 
     // Replace the user's stack with the GCD of all current values
     private void stackGCD(UUID user) {
-        ArrayList<Integer> userStack = clientStackMap.get(user);
+        List<Integer> userStack = clientStackMap.get(user);
 
         // iteratively find GCD
         int result = userStack.get(0);
@@ -95,7 +96,8 @@ public class CalculatorImplementation implements Calculator {
     public UUID register(){
         // Generate a unique client ID and create a new stack for this client
         UUID id = UUID.randomUUID();
-        clientStackMap.put(id, new ArrayList<>());
+        // create synchronized to make threadsafe
+        clientStackMap.put(id, Collections.synchronizedList(new ArrayList<>()));
         return id;
     }
 
