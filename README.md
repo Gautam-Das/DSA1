@@ -31,7 +31,9 @@ To compile the Java files there are two options:
 ### Starting the Registry and Server
 Once compiled, run the following command
 `java -cp <folder> CalculatorServer`
-where the folder is the target folder chosen during compilation, if the `javac` command above was used this should be `out`. If `mvn` was used this should be `target/classes`
+where the folder is the target folder chosen during compilation, if the `javac` command above was used this should be `out`. If `mvn` was used this should be `target/classes`   
+
+This should start registry and server.
 
 ### Running Clients(s)
 Once the server is running, go to a different terminal and run the command
