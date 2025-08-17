@@ -45,9 +45,6 @@ public class CalculatorImplementation implements Calculator {
         if (a == 0 || b == 0) {
             return 0; // LCM involving zero is typically defined as zero
         }
-        System.out.println(a);
-        System.out.println(b);
-        System.out.println(gcd(a,b));
         return Math.abs(a * b) / gcd(a, b);
     }
 

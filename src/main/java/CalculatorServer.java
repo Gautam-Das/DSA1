@@ -4,7 +4,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 
 public class CalculatorServer {
-    static String ServerName = "main.java.Calculator Service";
+    static String ServerName = "CalculatorService";
 
     public static void main(String[] args){
         try {
@@ -14,6 +14,8 @@ public class CalculatorServer {
 
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.rebind(ServerName, stub);
+
+            System.out.println("Server is up and running");
         } catch (Exception e) {
             e.printStackTrace();
         }
