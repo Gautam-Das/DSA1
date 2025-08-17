@@ -16,7 +16,7 @@ public class CalculatorClient {
 
             // Start scanning user input
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Enter commands (number, pop, lcm, min, max, gcd, isEmpty, delayPop <ms>, exit):");
+            System.out.println("Enter commands (<number>, pop, lcm, min, max, gcd, isEmpty, delayPop <ms>, exit):");
 
             while (true) {
                 String line = scanner.nextLine().trim();
