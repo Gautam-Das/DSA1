@@ -56,7 +56,7 @@ public class CalculatorClient {
                     // If input is delayPop <number>
                     else if (line.toLowerCase().startsWith("delaypop")) {
                         String[] parts = line.split("\\s+");
-                        if (parts.length == 2 && parts[1].matches("\\d+")) {
+                        if (parts.length == 2 && parts[1].matches("-?\\d+")) {
                             int millis = Integer.parseInt(parts[1]);
                             int val = server.delayPop(id, millis);
                             System.out.println("DelayPop result: " + val);
