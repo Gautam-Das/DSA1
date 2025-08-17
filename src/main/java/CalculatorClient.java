@@ -1,5 +1,6 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class CalculatorClient {
@@ -12,57 +13,67 @@ public class CalculatorClient {
 
             // register and get UUID
             UUID id = server.register();
-            // empty stack
-            System.out.println(server.isEmpty(id)); // should be true
 
-            // add 1,2,3
-            server.pushValue(id, 1);
-            server.pushValue(id, 2);
-            server.pushValue(id, 3);
+            // Start scanning user input
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter commands (number, pop, lcm, min, max, gcd, isEmpty, delayPop <ms>, exit):");
 
-            System.out.println(server.isEmpty(id)); // should be false
-            System.out.println(server.pop(id)); // should be 3
-            System.out.println(server.isEmpty(id)); // should be false
+            while (true) {
+                String line = scanner.nextLine().trim();
 
-            server.pushValue(id, 3);
+                if (line.equalsIgnoreCase("exit")) {
+                    System.out.println("Exiting...");
+                    break;
+                }
 
-            // calculate LCM
-            server.pushOperation(id,"lcm");
-            System.out.println(server.pop(id)); // should be 6
-            System.out.println(server.isEmpty(id)); // should be true
+                try {
+                    // If input is a number
+                    // -? : optional leading -
+                    // \\d+ : one of more digits
+                    if (line.matches("-?\\d+")) {
+                        int value = Integer.parseInt(line);
+                        server.pushValue(id, value);
+                        System.out.println("Pushed: " + value);
+                    }
+                    // If input is pop
+                    else if (line.equalsIgnoreCase("pop")) {
+                        int val = server.pop(id);
+                        System.out.println("Popped: " + val);
+                    }
+                    // If input is one of the operations
+                    else if (line.equalsIgnoreCase("lcm") ||
+                            line.equalsIgnoreCase("min") ||
+                            line.equalsIgnoreCase("max") ||
+                            line.equalsIgnoreCase("gcd")) {
+                        server.pushOperation(id, line.toLowerCase());
+                        System.out.println("Applied operation: " + line);
+                    }
+                    // If input is isEmpty
+                    else if (line.equalsIgnoreCase("isEmpty")) {
+                        boolean empty = server.isEmpty(id);
+                        System.out.println("Stack empty? " + empty);
+                    }
+                    // If input is delayPop <number>
+                    else if (line.toLowerCase().startsWith("delaypop")) {
+                        String[] parts = line.split("\\s+");
+                        if (parts.length == 2 && parts[1].matches("\\d+")) {
+                            int millis = Integer.parseInt(parts[1]);
+                            int val = server.delayPop(id, millis);
+                            System.out.println("DelayPop result: " + val);
+                        } else {
+                            System.out.println("Usage: delayPop <millis>");
+                        }
+                    }
+                    // Unknown command
+                    else {
+                        System.out.println("Unknown command: " + line);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+            }
 
-            // calculate GCD
-            server.pushValue(id, 10);
-            server.pushValue(id, 30);
-            server.pushValue(id, 20);
-
-            server.pushOperation(id,"gcd");
-            System.out.println(server.pop(id)); // should be 10
-            System.out.println(server.isEmpty(id)); // should be true
-
-            // calculate min
-            server.pushValue(id, 100);
-            server.pushValue(id, -100);
-            server.pushValue(id, 0);
-
-            server.pushOperation(id,"min");
-            System.out.println(server.pop(id)); // should be -100
-            System.out.println(server.isEmpty(id)); // should be true
-
-            // calculate max
-            server.pushValue(id, 100);
-            server.pushValue(id, -100);
-            server.pushValue(id, 0);
-
-            server.pushOperation(id,"max");
-            System.out.println(server.pop(id)); // should be 100
-            System.out.println(server.isEmpty(id)); // should be true
-
-            // delay pop
-            server.pushValue(id, 0);
-            System.out.println(server.isEmpty(id)); // should be false
-            System.out.println(server.delayPop(id,2000)); // should be 0
-            System.out.println(server.isEmpty(id)); // should be true
+            scanner.close();
 
         } catch (Exception e) {
             e.printStackTrace();
